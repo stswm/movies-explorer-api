@@ -1,6 +1,6 @@
-const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { JWT_KEY } = require('../utils/config');
 const User = require('../models/users');
 
 const { ServerError } = require('../Errors/ServerError');
@@ -8,20 +8,21 @@ const { NotFoundErr } = require('../Errors/NotFoundErr');
 const { BadReqestError } = require('../Errors/BadReqestError');
 const { AuthError } = require('../Errors/AuthError');
 const { ConflictingError } = require('../Errors/ConflictingError');
+const { errMsg } = require('../utils/constants');
 
 const getUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        next(new NotFoundErr());
+        next(new NotFoundErr(errMsg.userNotFoundErr));
       }
       res.status(200).send({ user });
     })
     .catch((err) => {
       if (err.message === 'NotFound') {
-        next(new NotFoundErr());
+        next(new NotFoundErr(errMsg.notFoundErrDBMsg));
       }
-      next(new ServerError());
+      next(new ServerError(errMsg.serverErr));
     });
 };
 
@@ -41,7 +42,7 @@ const updateUserProf = (req, res, next) => {
   )
     .then((userInfo) => {
       if (!userInfo) {
-        return next(new NotFoundErr('User not found'));
+        return next(new NotFoundErr(errMsg.userNotFoundErr));
       }
       return res.status(200).send(userInfo);
     })
@@ -50,7 +51,7 @@ const updateUserProf = (req, res, next) => {
         const fields = Object.keys(err.errors).join(' and ');
         return next(new BadReqestError(`Field(s) ${fields} are not correct`));
       }
-      return next(new ServerError());
+      return next(new ConflictingError());
     });
 };
 
@@ -77,7 +78,7 @@ const createUser = (req, res, next) => {
         const fields = Object.keys(err.errors).join(' and ');
         next(new BadReqestError(`Field(s) ${fields} are not correct`));
       } if (err.code === 11000) {
-        return next(new ConflictingError('Этот email уже занят'));
+        return next(new ConflictingError(errMsg.emailBusyErr));
       }
       return next(err);
     });
@@ -87,11 +88,11 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'testKey', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, JWT_KEY, { expiresIn: '7d' });
       res.send({ token });
     })
     .catch(() => {
-      next(new AuthError('Неправильные почта или пароль'));
+      next(new AuthError(errMsg.authorizationErrMsg));
     });
 };
 

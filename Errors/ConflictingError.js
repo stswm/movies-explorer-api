@@ -1,5 +1,5 @@
 class ConflictingError extends Error {
-  constructor(message = 'Conflicting Request 409') {
+  constructor(message) {
     super(message);
     this.code = 409;
   }

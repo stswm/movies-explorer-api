@@ -3,6 +3,7 @@ const { ServerError } = require('../Errors/ServerError');
 const { NotFoundErr } = require('../Errors/NotFoundErr');
 const { BadReqestError } = require('../Errors/BadReqestError');
 const { ForbiddenError } = require('../Errors/ForbiddenError');
+const { errMsg } = require('../utils/constants');
 
 const getMovies = (_, res, next) => {
   Movie.find({})
@@ -10,7 +11,7 @@ const getMovies = (_, res, next) => {
       res.status(200).send(movies);
     })
     .catch(() => {
-      next(new ServerError());
+      next(new ServerError(errMsg.serverErr));
     });
 };
 
@@ -51,7 +52,7 @@ const createMovie = (req, res, next) => {
         const fields = Object.keys(err.errors).join(' and ');
         return next(new BadReqestError(`Field(s) ${fields} are not correct`));
       }
-      return next(new ServerError());
+      return next(new ServerError(errMsg.serverErr));
     });
 };
 
@@ -61,7 +62,7 @@ const deleteMovie = (req, res, next) => {
   Movie.findById(id)
     .then((movie) => {
       if (!movie) {
-        return next(new NotFoundErr('Movie not found'));
+        return next(new NotFoundErr(errMsg.movieNotFoundErr));
       }
       if (movie.owner.toString() !== req.user._id) {
         throw new ForbiddenError();
@@ -70,7 +71,7 @@ const deleteMovie = (req, res, next) => {
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
-        return next(new BadReqestError('Movie Id is not correct'));
+        return next(new BadReqestError(errMsg.movieIdNotCorrErr));
       }
       return next(err);
     });

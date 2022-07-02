@@ -1,5 +1,5 @@
 class AuthError extends Error {
-  constructor(message = 'Unauthorized Error 401') {
+  constructor(message) {
     super(message);
     this.code = 401;
   }
