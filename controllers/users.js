@@ -21,8 +21,9 @@ const getUser = (req, res, next) => {
     .catch((err) => {
       if (err.message === 'NotFound') {
         next(new NotFoundErr(errMsg.notFoundErrDBMsg));
+      } else {
+        next(new ServerError(errMsg.serverErr));
       }
-      next(new ServerError(errMsg.serverErr));
     });
 };
 
@@ -51,7 +52,7 @@ const updateUserProf = (req, res, next) => {
         const fields = Object.keys(err.errors).join(' and ');
         return next(new BadReqestError(`Field(s) ${fields} are not correct`));
       }
-      return next(new ConflictingError());
+      return next(new ConflictingError(errMsg.emailBusyErr));
     });
 };
 

@@ -17,13 +17,13 @@ mongoose.connect(DB_URL, () => {
 });
 
 app.use(requestLogger);
-app.use(errorLogger);
 app.use(limiter);
 app.use(helmet());
 app.use(express.json());
 
 app.use('/', routes);
 
+app.use(errorLogger);
 app.use(errors());
 app.use(errorHeandler);
 

@@ -9,6 +9,7 @@ const errMsg = {
   movieIdNotCorrErr: 'Movie Id is not correct',
   movieNotFoundErr: 'Movie not found',
   pageNotFoundErr: 'Page not found',
+  forbErrMsg: '403 Forbidden',
 };
 
 module.exports = { errMsg };
