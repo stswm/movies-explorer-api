@@ -1,6 +1,17 @@
 const { celebrate, Joi } = require('celebrate');
+const isUrl = require('validator/lib/isURL');
+const { BadReqestError } = require('../Errors/BadReqestError');
+const { errMsg } = require('../utils/constants');
 
-const reg = /^https?:\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+)/i;
+const validUrl = (url) => {
+  const validate = isUrl(url);
+  if (validate) {
+    return url;
+  }
+  throw new BadReqestError(errMsg.badUrlMsg);
+};
+
+// const reg = /^https?:\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+)/i;
 
 const validateNewUser = celebrate({
   body: Joi.object().keys({
@@ -35,9 +46,9 @@ const validateCreateMovie = celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    image: Joi.string().required().regex(reg),
-    trailerLink: Joi.string().required().regex(reg),
-    thumbnail: Joi.string().required().regex(reg),
+    image: Joi.string().required().custom(validUrl),
+    trailerLink: Joi.string().required().custom(validUrl),
+    thumbnail: Joi.string().required().custom(validUrl),
     movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
