@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const helmet = require('helmet');
-const cors = require('./middlewares/cors');
+const cors = require('cors');
 const limiter = require('./middlewares/limiter');
 const { errorHeandler } = require('./controllers/main');
 const { ENV_PORT, DB_URL } = require('./utils/config');
@@ -22,8 +22,8 @@ app.use(limiter);
 app.use(helmet());
 app.use(express.json());
 
-app.use('/', routes);
 app.use(cors());
+app.use('/', routes);
 
 app.use(errorLogger);
 app.use(errors());
