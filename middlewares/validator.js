@@ -28,7 +28,7 @@ const validateUpdateUserProf = celebrate({
   }),
 });
 const validateUserId = celebrate({
-  params: Joi.object().keys({
+  body: Joi.object().keys({
     id: Joi.string().required().hex().length(24),
   }),
 });

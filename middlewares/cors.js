@@ -13,6 +13,7 @@ const allowedCors = [
   'https://api.stswm.nomoreparties.sbs',
   'http://api.stswm.movie.nomoredomains.xyz',
   'https://api.stswm.movie.nomoredomains.xyz',
+  'https://api.nomoreparties.coundefined/',
 ];
 
 const cors = (req, res, next) => {
