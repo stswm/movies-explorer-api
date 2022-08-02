@@ -29,7 +29,7 @@ const getUser = (req, res, next) => {
 
 const updateUserProf = (req, res, next) => {
   const { name, email } = req.body;
-  const id = req.user.user._id;
+  const id = req.user._id;
   User.findByIdAndUpdate(
     id,
     {
